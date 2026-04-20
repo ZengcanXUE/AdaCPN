@@ -49,28 +49,15 @@ class Experiment:
             valid_loader = DataLoader(self.dataset.data['valid'], self.eval_conf.get('batch_size'), shuffle=False, drop_last=False)
         if self.dataset.data['test']:
             test_loader = DataLoader(self.dataset.data['test'], self.eval_conf.get('batch_size'), shuffle=False, drop_last=False)
-        last_tail_score = -1.0
-        best_tail_H10 = 0
-        best_tail_H3 = 0
-        best_tail_H1 = 0
-        best_tail_MRR = 0
-        best_tail_MR = 0
 
-        last_head_score = -1.0
-        best_head_H10 = 0
-        best_head_H3 = 0
-        best_head_H1 = 0
-        best_head_MRR = 0
-        best_head_MR = 0
-
-        last_all_score = -1.0
-        best_all_H10 = 0
-        best_all_H3 = 0
-        best_all_H1 = 0
-        best_all_MRR = 0
-        best_all_MR = 0
-        print('Epoch\t[Tail]MRR\tHits@10\tHits@3\tHits@1\t[Head]MRR\tHits@10\tHits@3\tHits@1\t[All]MRR\tHits@10\tHits@3\tHits@1')
-        logging.info('Epoch\t[Tail]MRR\tHits@10\tHits@3\tHits@1\t[Head]MRR\tHits@10\tHits@3\tHits@1\t[All]MRR\tHits@10\tHits@3\tHits@1')
+        last_score = -1.0
+        best_H10 = 0
+        best_H3 = 0
+        best_H1 = 0
+        best_MRR = 0
+        best_MR = 0
+        print('Epoch\tMRR\tHits@10\tHits@3\tHits@1')
+        logging.info('Epoch\tMRR\tHits@10\tHits@3\tHits@1')
     
         for epoch in range(self.train_conf.get('epochs')):
             start_time = time.time()
@@ -93,50 +80,30 @@ class Experiment:
                     with torch.no_grad():
                         eval_results = self.eval_func(test_loader, self.model, self.device, self.dataset.data, self.eval_conf.get('scoring_desc'))
                         arr = self.output_func(epoch, eval_results, 'test')
-                        tail_arr = arr[0:5]
-                        head_arr = arr[5:10] 
-                        all_arr = arr[10:15]  
+                        arr = arr[0:5]
+
                         
-                        now_tail_score = sum(tail_arr[0:4])
-                        now_head_score = sum(head_arr[0:4])
-                        now_all_score = sum(all_arr[0:4])
-                    if now_tail_score > last_tail_score :
-                        last_tail_score = now_tail_score
-                        best_tail_H10 = tail_arr[0]
-                        best_tail_H3 = tail_arr[1]
-                        best_tail_H1 = tail_arr[2]
-                        best_tail_MRR = tail_arr[3]
-                        best_tail_MR = tail_arr[4]
+                        now_score = sum(arr[0:4])
+
+                    if now_score > last_score :
+                        last_score = now_score
+                        best_H10 = arr[0]
+                        best_H3 = arr[1]
+                        best_H1 = arr[2]
+                        best_MRR = arr[3]
+                        best_MR = arr[4]
                         if not os.path.exists(self.save_model_path):
                             os.makedirs(self.save_model_path)
                             logging.info('Created output directory {}'.format(self.save_model_path))
                         torch.save(self.model, f'{self.save_model_path}/{self.model_name}_{self.dataset.name}.ckpt')
 
-                    if now_head_score > last_head_score :
-                        last_head_score = now_head_score
-                        best_head_H10 = head_arr[0]
-                        best_head_H3 = head_arr[1]
-                        best_head_H1 = head_arr[2]
-                        best_head_MRR = head_arr[3]
-                        best_head_MR = head_arr[4]
 
-                    if now_all_score > last_all_score :
-                        last_all_score = now_all_score
-                        best_all_H10 = all_arr[0]
-                        best_all_H3 = all_arr[1]
-                        best_all_H1 = all_arr[2]
-                        best_all_MRR = all_arr[3]
-                        best_all_MR = all_arr[4]
         
         
-        print(f'Best tail test score: MR={best_tail_MR:.4f} - MRR={best_tail_MRR:.4f} - Hits@10={best_tail_H10:.4f} - Hits@3={best_tail_H3:.4f} - Hits@1={best_tail_H1:.4f}')
-        print(f'Best head test score: MR={best_head_MR:.4f} - MRR={best_head_MRR:.4f} - Hits@10={best_head_H10:.4f} - Hits@3={best_head_H3:.4f} - Hits@1={best_head_H1:.4f}')
-        print(f'Best all test score: MR={best_all_MR:.4f} - MRR={best_all_MRR:.4f} - Hits@10={best_all_H10:.4f} - Hits@3={best_all_H3:.4f} - Hits@1={best_all_H1:.4f}')
+        print(f'Best test score: MR={best_MR:.4f} - MRR={best_MRR:.4f} - Hits@10={best_H10:.4f} - Hits@3={best_H3:.4f} - Hits@1={best_H1:.4f}')
         print('Finished!')
 
-        logging.info('Best tail test score: MR=%.4f - MRR=%.4f - Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f',best_tail_MR,best_tail_MRR, best_tail_H10, best_tail_H3, best_tail_H1)
-        logging.info('Best head test score: MR=%.4f - MRR=%.4f - Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f',best_head_MR,best_head_MRR, best_head_H10, best_head_H3, best_head_H1)
-        logging.info('Best all test score: MR=%.4f - MRR=%.4f - Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f',best_all_MR,best_all_MRR, best_all_H10, best_all_H3, best_all_H1)
+        logging.info('Best test score: MR=%.4f - MRR=%.4f - Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f',best_MR,best_MRR, best_H10, best_H3, best_H1)
         logging.info('Finished!')
 
 if __name__ == '__main__':

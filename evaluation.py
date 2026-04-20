@@ -96,52 +96,24 @@ def output_eval_tail(epoch, results, data_name):
     r_ranks_right = 1.0 / ranks_right
     r_ranks = 1.0 / ranks
 
-    tail_hit10 = hits[9].mean()
-    tail_hit3 = hits[2].mean()
-    tail_hit1 = hits[0].mean()
-    tail_MRR = r_ranks_right.mean()
-    tail_MR = ranks_right.mean()
+    hit10 = hits[9].mean()
+    hit3 = hits[2].mean()
+    hit1 = hits[0].mean()
+    mrr = r_ranks_right.mean()
+    mr = ranks_right.mean()
 
-    head_hit10 = hits_left[9].mean()
-    head_hit3 = hits_left[2].mean()
-    head_hit1 = hits_left[0].mean()
-    head_MRR = r_ranks_left.mean()
-    head_MR = ranks_left.mean()
 
-    all_hit10 = (hits[9].mean() + hits_left[9].mean())/2
-    all_hit3 = (hits[2].mean() + hits_left[2].mean())/2
-    all_hit1 = (hits[0].mean() + hits_left[0].mean())/2
-    all_MRR = (r_ranks_right.mean() + r_ranks_left.mean())/2
-    all_MR = (ranks_right.mean() + ranks_left.mean())/2
+    print('For %s data: Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f' % (data_name, hits[9].mean(), hits[2].mean(), hits[0].mean()))
+    print('For %s data: MR=%.4f - MRR=%.4f' % (data_name, ranks_right.mean(), r_ranks_right.mean()))
 
-    print('Tail: For %s data: Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f' % (data_name, hits[9].mean(), hits[2].mean(), hits[0].mean()))
-    print('Tail: For %s data: MR=%.4f - MRR=%.4f' % (data_name, ranks_right.mean(), r_ranks_right.mean()))
-
-    print('Head: For %s data: Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f' % (data_name, hits_left[9].mean(), hits_left[2].mean(), hits_left[0].mean()))
-    print('Head: For %s data: MR=%.4f - MRR=%.4f' % (data_name, ranks_left.mean(), r_ranks_left.mean()))
- 
-    print('All: For %s data: Hits@10=%.4f - Hits@3=%.4f - Hits@1=%.4f' % (data_name, all_hit10, all_hit3, all_hit1))
-    print('All: For %s data: MR=%.4f - MRR=%.4f' % (data_name, all_MR, all_MRR))
 
 
     if data_name=='test':
-        print('[epcoh # %s] %.4f  %.4f  %.4f  %.4f   '
-        ' %.4f  %.4f  %.4f  %.4f   '
-        ' %.4f  %.4f  %.4f  %.4f   ' % (epoch+1,
-                                        r_ranks_right.mean(), hits[9].mean(), hits[2].mean(), hits[0].mean(), 
-                                        r_ranks_left.mean(), hits_left[9].mean(), hits_left[2].mean(), hits_left[0].mean(),
-                                        all_MRR,all_hit10, all_hit3, all_hit1))
-        logging.info('%s\t%.4f\t%.4f\t%.4f\t%.4f\t'
-        ' %.4f\t%.4f\t%.4f\t%.4f\t'
-        ' %.4f\t%.4f\t%.4f\t%.4f' % (epoch+1,
-                                            r_ranks_right.mean(), hits[9].mean(), hits[2].mean(), hits[0].mean(), 
-                                            r_ranks_left.mean(), hits_left[9].mean(), hits_left[2].mean(), hits_left[0].mean(),
-                                            all_MRR,all_hit10, all_hit3, all_hit1))
+        print('[epcoh # %s] %.4f  %.4f  %.4f  %.4f   ' % (epoch+1, r_ranks_right.mean(), hits[9].mean(), hits[2].mean(), hits[0].mean()))
+        logging.info('%s\t%.4f\t%.4f\t%.4f\t%.4f\t' % (epoch+1, r_ranks_right.mean(), hits[9].mean(), hits[2].mean(), hits[0].mean()))
     
     
-    arr = [tail_hit10, tail_hit3, tail_hit1, tail_MRR, tail_MR, 
-           head_hit10, head_hit3, head_hit1, head_MRR, head_MR, 
-           all_hit10 , all_hit3 , all_hit1 , all_MRR, all_MR]
+    arr = [hit10, hit3, hit1, mrr, mr]
     
 
     return arr
