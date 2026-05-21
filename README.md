@@ -18,4 +18,21 @@ Start training command:
 $ python main.py -c configs/FB15k237.json
 ```
 
-## Citation
+### Citation:
+Please cite the following paper if you use this code in your work.
+
+```bibtex
+@article{AdaCPN,
+title = {Exploring contextual and pairwise semantic-enhanced embedding with adaptive fusion for knowledge graph completion},
+journal = {Information Processing & Management},
+volume = {63},
+number = {7, Part B},
+pages = {104849},
+year = {2026},
+issn = {0306-4573},
+doi = {https://doi.org/10.1016/j.ipm.2026.104849},
+url = {https://www.sciencedirect.com/science/article/pii/S0306457326002402},
+author = {Zengcan Xue and Jiarui Chen and Xiaoyong Hu and Zirou Lin},
+keywords = {Knowledge graph completion, Adaptive convolution, Hybrid-granularity semantic, Link prediction},
+}
+```
